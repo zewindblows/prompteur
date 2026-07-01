@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canevas — Écrire un bon prompt avec Claude</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="icon-192.png">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Canevas à prompts</h1>
+  </header>
+
+  <div class="grid">
+
+    <!-- COLONNE GAUCHE : LE FORMULAIRE -->
+    <div class="builder">
+
+      <!-- ÉTAPE 1 -->
+      <div class="step s1">
+        <div class="step-head"><span class="step-num">1</span><span class="step-title">Poser le contexte</span></div>
+        <p class="step-hint">Rôle, objectif, audience</p>
+
+        <label>Rôle</label>
+        <textarea id="role" placeholder="Ingénieur pédagogique chez SmartPush"></textarea>
+
+        <label>Objectif</label>
+        <textarea id="objectif" placeholder="Je prépare un module de formation interne"></textarea>
+
+        <label>Audience</label>
+        <textarea id="audience" placeholder="Des commerciaux non techniques, débutants sur le sujet"></textarea>
+
+        <label>Contexte supplémentaire</label>
+        <textarea id="contexte" placeholder="Cela s'inscrit dans une formation en 3 modules, le ton doit rester accessible"></textarea>
+      </div>
+
+      <!-- ÉTAPE 2 -->
+      <div class="step s2">
+        <div class="step-head"><span class="step-num">2</span><span class="step-title">Définir la tâche</span></div>
+
+        <div class="chips" id="actionChips">
+          <button class="chip" type="button">Écrire</button>
+          <button class="chip" type="button">Analyser</button>
+          <button class="chip" type="button">Construire</button>
+          <button class="chip" type="button">Résumer</button>
+          <button class="chip" type="button">Comparer</button>
+          <button class="chip" type="button">Traduire</button>
+          <button class="chip" type="button">Reformuler</button>
+          <button class="chip" type="button">Corriger</button>
+          <button class="chip" type="button">Extraire</button>
+        </div>
+
+        <label>Décris la tâche précisément</label>
+        <textarea id="tache" placeholder="Rédige un quiz de 10 questions à choix multiples sur les bases du prompting"></textarea>
+
+        <label>Contenu / données à fournir (optionnel)</label>
+        <textarea id="contenu" placeholder="Colle ici le texte, les données ou le document à analyser, résumer, traduire ou traiter"></textarea>
+      </div>
+
+      <!-- ÉTAPE 3 -->
+      <div class="step s3">
+        <div class="step-head"><span class="step-num">3</span><span class="step-title">Spécifier les règles</span></div>
+        <p class="step-hint">Format, longueur, ton, contraintes</p>
+
+        <label>Format de sortie</label>
+        <textarea id="format" placeholder="Un tableau · une liste à puces · un rapport structuré"></textarea>
+
+        <label>Longueur souhaitée</label>
+        <textarea id="longueur" placeholder="2 paragraphes · environ 300 mots"></textarea>
+
+        <label>Ton</label>
+        <textarea id="ton" placeholder="Conversationnel et pédagogique"></textarea>
+
+        <label>À éviter / contraintes</label>
+        <textarea id="eviter" placeholder="N'invente aucune donnée, évite le jargon technique, ne dépasse pas une page"></textarea>
+
+        <label>Un ou plusieurs exemples du résultat attendu (2-3 idéalement)</label>
+        <textarea id="exemple" placeholder="Colle un ou plusieurs exemples du format ou du style voulu — sépare-les par une ligne vide. Plus tu en donnes, plus les réponses seront régulières."></textarea>
+
+        <div class="toggles">
+          <label class="toggle"><input type="checkbox" id="t_ask"><span class="tx">Poser des questions si besoin</span></label>
+          <label class="toggle"><input type="checkbox" id="t_steps"><span class="tx">Procéder étape par étape</span></label>
+          <label class="toggle"><input type="checkbox" id="t_search"><span class="tx">Recherche à jour et sourcée</span></label>
+          <label class="toggle"><input type="checkbox" id="t_review"><span class="tx">Relire et améliorer ce prompt</span></label>
+        </div>
+      </div>
+
+      <button class="reset" id="resetBtn" type="button">Réinitialiser le canevas</button>
+    </div>
+
+    <!-- COLONNE DROITE : APERÇU -->
+    <div class="preview">
+      <div class="preview-card">
+        <div class="preview-top">
+          <h2>Ton prompt</h2>
+          <button class="copy" id="copyBtn">Copier</button>
+        </div>
+        <div id="output"><span class="empty">Commence à remplir les étapes… ton prompt apparaîtra ici.</span></div>
+      </div>
+
+      <details class="errors">
+        <summary>Erreurs courantes à éviter</summary>
+        <div class="etable">
+          <div class="erow"><span>Problème</span><span>Cause</span><span>Solution</span></div>
+          <div class="erow"><span>Réponse trop générique</span><span>Pas assez de contexte</span><span>Ajoute ton rôle, ton audience, tes contraintes</span></div>
+          <div class="erow"><span>Trop long / trop court</span><span>Claude devine la longueur</span><span>Sois explicite : « en 2 paragraphes »</span></div>
+          <div class="erow"><span>Mauvais format</span><span>Claude ne sait pas comment tu le veux</span><span>Montre un exemple du format désiré</span></div>
+          <div class="erow"><span>Infos fausses</span><span>Hallucination</span><span>Vérifie les faits, demande des sources</span></div>
+          <div class="erow"><span>Mauvais ton</span><span>Claude est pro par défaut</span><span>Décris le ton : « plus conversationnel »</span></div>
+        </div>
+      </details>
+
+      <details class="errors">
+        <summary class="sum-modes">Les 3 modes d'utilisation</summary>
+        <div class="etable">
+          <div class="mode-row m1"><b>Automation</b><span>Claude exécute une tâche précise selon tes instructions.</span></div>
+          <div class="mode-row m2"><b>Augmentation</b><span>Toi et Claude réfléchissez ensemble, comme partenaires.</span></div>
+          <div class="mode-row m3"><b>Agency</b><span>Tu configures Claude pour qu'il travaille de façon autonome.</span></div>
+        </div>
+      </details>
+    </div>
+
+  </div>
+
+  <footer>Canevas basé sur la formation Anthropic — Contexte · Tâche · Spécificité</footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
